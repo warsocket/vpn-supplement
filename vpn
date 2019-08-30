@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]
+then
+  cd ~/openvpn/
+  ls -l *.ovpn | awk '{print $9}'
+  cd -
+  exit
+fi
+
+cp ~/openvpn/$1 /tmp/openvpnscript.ovpn
+
+echo "" >> /tmp/openvpnscript.ovpn
+echo "script-security 2" >> /tmp/openvpnscript.ovpn
+echo "up /home/bram/bin/resolved-update.sh" >> /tmp/openvpnscript.ovpn
+echo "down /etc/openvpn/update-systemd-resolved" >> /tmp/openvpnscript.ovpn
+
+sudo openvpn --config /tmp/openvpnscript.ovpn --auth-user-pass ~/openvpn/creds
